@@ -29,26 +29,26 @@ const CustomMap = withScriptjs(
       console.log(props),
     <GoogleMap 
       defaultZoom={13}
-      defaultCenter={{ lat:parseInt(props.lat,10), lng: parseInt(props.lng,10) }}
+      defaultCenter={{ lat: 40.748817, lng: -73.985428 }}
       defaultOptions={{
         scrollwheel: false,
         zoomControl: true
       }}
     >
-      <Marker position={{ lat: parseInt(props.lat,10), lng: parseInt(props.lng,10)}} />
+      <Marker position={{ lat: 40.748817, lng: -73.985428 }} />
     </GoogleMap>
   ))
 );
 
 function Maps({ ...prop }) {
   return (
-    <CustomMap id="MyMap"
+    <CustomMap
       googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvtriHrIpRfOnck3IHwWSB3_Embm5jFm4"
       loadingElement={<div style={{ height: `100%` }} />}
       containerElement={<div style={{ height: `100vh` }} />}
       mapElement={<div style={{ height: `100%` }} />}
-      lat={prop.lat}
-      lng={prop.lng}
+      lat="12"
+      lng="12"
     />
   );
 }

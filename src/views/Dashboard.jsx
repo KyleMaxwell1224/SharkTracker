@@ -15,35 +15,20 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+import ReactDOM from "react-dom"
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
+import Maps from "./Maps"
 import { Grid, Row, Col } from "react-bootstrap";
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker
-} from "react-google-maps";
-import { Card } from "components/Card/Card.jsx";
-import { StatsCard } from "components/StatsCard/StatsCard.jsx";
-import { Tasks } from "components/Tasks/Tasks.jsx";
-import {
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar
-} from "variables/Variables.jsx";
-var json
+import '../assets/css/Dashboard.css'; // Tell webpack that Button.js uses these styles
+
+
+var json;
 var maps_key = "AIzaSyDvtriHrIpRfOnck3IHwWSB3_Embm5jFm4"
 
 class Dashboard extends Component {
-
+  componentDidMount() {
+    document.title = "Shark Book";
+  }
   createLegend(json) {
     var legend = [];
     for (var i = 0; i < json["names"].length; i++) {
@@ -57,6 +42,7 @@ class Dashboard extends Component {
   render() {
     return (
       <div className="content">
+
         <Grid fluid>
         <Col lg={3} sm={6}>
           <Row>
@@ -79,32 +65,54 @@ class Dashboard extends Component {
           </Row>
           <Row>
             <Col>
-            <Maps lat= "40.748817" lng= "-73.985428" id="tracksharksmap" ></Maps>
-            </Col>
+              <div id="SharkMap"/>
+           </Col>
           </Row>
         </Grid>
       </div>
     );
   }
 }
+var array = [];
 
+function FilterSharks(species){
+    if(!array.includes(species))
+    {
+      array.push(species)
+    }
+}
+function CreateMap(latitude, longitude){
+  if(document.getElementById('SharkMap').childNodes.length>0)
+  {
+    ReactDOM.unmountComponentAtNode(document.getElementById('SharkMap'))
+  }
+  const element = <Maps lat={latitude} lng={longitude}/>;
+  ReactDOM.render(
+    element,
+    document.getElementById('SharkMap'));
+}
 function SharkTracker() {
     var index = findSharkImage(document.getElementById("sharknames").value, json)
+    console.log(index)
+    console.log(json[index])
     var link= json[index].images[0].filename;
     console.log(json[index].pings[0].latitude, json[index].pings[0].longitude )
     document.getElementById("shark_image").src=link
-    setLocation(json[index].pings[0].latitude, json[index].pings[0].longitude)
-}
-function setLocation(latitude, longitude)
-{
-
+    CreateMap(json[index].pings[0].latitude, json[index].pings[0].longitude);
+    var t
+    for( t = 0; t < array.length; t++)
+    {
+      console.log(array[t])
+    }
 }
 function findSharkImage(sharkname, json){
   var i;
+  console.log(sharkname)
   for (i = 0; i < json.length; i++)
   {
-    if(json[i].name==sharkname)
+    if(json[i].name.trim() ===sharkname.trim() )
     {
+      console.log("same")
       return i
     }
   }
@@ -126,6 +134,11 @@ function SharkNameList() {
     var i;
     let optionList = document.getElementById('sharknames').options;
     for(i = 0; i < json.length; i++){
+        if(json[i].images[0]===undefined)
+        {
+          json[i].images[0].filename="./assets/img/sad_shark.jpg"
+        }
+        FilterSharks(json[i].species)
         sharkNameArray[i] = json[i].name
     }
     sharkNameArray.forEach(shark =>
@@ -136,37 +149,6 @@ function SharkNameList() {
 }
   xhttp.send();
 
-}
-const CustomMap = withScriptjs(
-  withGoogleMap(props => (   
-    console.log(props.lat), 
-    console.log(props.lng),
-    <GoogleMap 
-      defaultZoom={13}
-      defaultCenter={{ lat: 40.748817, lng: -73.985428 }}
-      defaultOptions={{
-        scrollwheel: false,
-        zoomControl: true
-      }}
-    >
-      <Marker id="coords" position={{ lat: parseInt(props.lat, 10), lng: parseInt(props.long, 10) }} />
-    </GoogleMap>
-  ))
-);
-
-function Maps({ ...prop }) {
-  var url = "https://maps.googleapis.com/maps/api/js?key="+maps_key
-  console.log(prop)
-  return (
-    <CustomMap
-      lat={prop.lat}
-      lng={prop.lng}
-      googleMapURL={url}
-      loadingElement={<div style={{ height: `100%` }} />}
-      containerElement={<div style={{ height: `100vh` }} />}
-      mapElement={<div style={{ height: `100%` }} />}
-    />
-  );
 }
 
 export default Dashboard;
