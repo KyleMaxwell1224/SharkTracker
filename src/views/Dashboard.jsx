@@ -19,8 +19,7 @@ import ReactDOM from "react-dom"
 import React, { Component } from "react";
 import Maps from "./Maps"
 import { Grid, Row, Col } from "react-bootstrap";
-import '../assets/css/Dashboard.css'; // Tell webpack that Button.js uses these styles
-
+import '../assets/css/Dashboard.css'; 
 
 var json;
 var maps_key = "AIzaSyDvtriHrIpRfOnck3IHwWSB3_Embm5jFm4"
@@ -62,6 +61,9 @@ class Dashboard extends Component {
             <Col>
             <img id="shark_image" src=""></img> 
             </Col>
+            <Col>
+            <div id="last_location"/>
+            </Col>
           </Row>
           <Row>
             <Col>
@@ -75,8 +77,8 @@ class Dashboard extends Component {
 }
 var array = [];
 
-function FilterSharks(species){
-    if(!array.includes(species))
+function FilterSharks(species, group){
+    if(!array.includes(species)&& group ==="shark")
     {
       array.push(species)
     }
@@ -98,12 +100,12 @@ function SharkTracker() {
     var link= json[index].images[0].filename;
     console.log(json[index].pings[0].latitude, json[index].pings[0].longitude )
     document.getElementById("shark_image").src=link
+    const text = <h1>Last scene in {json[index].tagLocation}</h1>
+    ReactDOM.render(
+      text,
+      document.getElementById("last_location"));
     CreateMap(json[index].pings[0].latitude, json[index].pings[0].longitude);
-    var t
-    for( t = 0; t < array.length; t++)
-    {
-      console.log(array[t])
-    }
+    
 }
 function findSharkImage(sharkname, json){
   var i;
@@ -130,6 +132,7 @@ function SharkNameList() {
   xhttp.setRequestHeader("Content-type", "application/json");
   xhttp.onload = function() { 
     json = JSON.parse(this.response);
+    console.log(json)
     var sharkNameArray = new Array(json.length);
     var i;
     let optionList = document.getElementById('sharknames').options;
@@ -138,8 +141,8 @@ function SharkNameList() {
         {
           json[i].images[0].filename="./assets/img/sad_shark.jpg"
         }
-        FilterSharks(json[i].species)
-        sharkNameArray[i] = json[i].name
+        FilterSharks(json[i].species, json[i].species_group)
+        sharkNameArray.push(json[i].name)
     }
     sharkNameArray.forEach(shark =>
       optionList.add(

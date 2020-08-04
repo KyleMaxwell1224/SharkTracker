@@ -16,33 +16,32 @@
 
 */
 import React, { Component } from "react";
+import '../UserCard/UserCard.css'; // Tell webpack that Button.js uses these styles
 
 export class UserCard extends Component {
   render() {
     return (
-      <div className="card card-user">
-        <div className="image">
-          <img src={this.props.bgImage} alt="..." />
-        </div>
+      <div className="card">
+
         <div className="content">
           <div className="author">
-            <a href="#pablo">
-              <img
-                className="avatar border-gray"
-                src={this.props.avatar}
-                alt="..."
-              />
-              <h4 className="title">
+            <a href="#shark">
+            <h4 className="title">
                 {this.props.name}
                 <br />
                 <small>{this.props.userName}</small>
               </h4>
+              <img
+                className="border-gray"
+                src={this.props.avatar}
+                alt="..."
+              />
+
             </a>
           </div>
           <p className="description text-center">{this.props.description}</p>
         </div>
         <hr />
-        <div className="text-center">{this.props.socials}</div>
       </div>
     );
   }
