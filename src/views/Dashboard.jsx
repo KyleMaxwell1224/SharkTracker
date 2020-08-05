@@ -121,6 +121,7 @@ function findSharkImage(sharkname, json){
   return -1;
 }
 function SharkNameList() {
+  //TODO change to .fetch
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
        if (this.readyState === 4 && this.status === 200) {
